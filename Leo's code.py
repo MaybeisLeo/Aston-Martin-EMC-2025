@@ -8,7 +8,6 @@ import time
 from scipy.optimize import differential_evolution
 from pyswarm import pso
 from scipy.interpolate import interp1d
-import random
 from multiprocessing import Pool,cpu_count
 import matplotlib.pyplot as plt
 start=time.time()
@@ -609,9 +608,7 @@ def anaylise(aerofoil):
 
 #main program
 if __name__=="__main__":
-    #choose=str(input("1.brute,2.diff"))
-
-    choose="4"
+    choose=str(input("1.brute,2.diff"))
     if choose=="1":
         naca=genNACA(m_range,p_range,t_range)
         num_cores = multiprocessing.cpu_count()-1
