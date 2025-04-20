@@ -1,0 +1,16 @@
+focus = int(input("Enter what you want to optimize: 0.Lift, 1.Drag, 2.Lift/Drag: "))
+velocity = float(input("Enter the velocity: "))
+AoA = float(input("Enter the angle of attack: "))
+drag_lb = float(input("Enter minimum Drag (or -1 to ignore): "))
+drag_ub = float(input("Enter maximum Drag (or -1 to ignore): "))
+lift_lb = float(input("Enter minimum Lift (or -1 to ignore): "))
+lift_ub = float(input("Enter maximum Lift (or -1 to ignore): "))
+
+with open("constants.txt","w") as f:
+    f.write(f"{focus}\n")
+    f.write(f"{velocity}\n")
+    f.write(f"{AoA}\n")
+    f.write(f"{drag_lb}\n")
+    f.write(f"{drag_ub}\n")
+    f.write(f"{lift_lb}\n")
+    f.write(f"{lift_ub}\n")
