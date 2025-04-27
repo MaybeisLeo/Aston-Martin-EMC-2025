@@ -11,8 +11,8 @@ from scipy.interpolate import interp1d
 from multiprocessing import Pool,cpu_count
 import matplotlib.pyplot as plt
 start=time.time()
-maxiter=30
-population=55
+maxiter=55
+population=30
 m_range= range(4, 6)  # Maximum camber
 p_range= range(0, 6)  # Location of the camber
 t_range= range(0, 3) 
@@ -22,7 +22,7 @@ L=[]
 D=[]
 R=[]
 Dp=[]
-directory="C:/Users/liuwi/OneDrive/Documents/XFOIL6.99/no ai"
+directory=os.getcwd()
 store=[]
 Niter=500
 re=1e5
@@ -68,7 +68,7 @@ def swarm_PARSEC(pop,maxITER,verbose=True):
     plot_airfoil_from_dat(os.path.join(directory, f"swarm_{round(-best_f)}.dat"))
     
     if verbose:
-        print(f"Optimized airfoil saved as 'pso_{round(-best_f)}.dat'")
+        print(f"Optimized airfoil saved as '{f"swarm_{round(-best_f)}.dat"}'")
         print(f"Total optimization time: {time.time() - start_time:.2f}s")
         
 
@@ -367,6 +367,8 @@ def evo_PARSEC(pop, maxITER, verbose=True):
     
     lower_bounds = np.array([0.003, 0.25, 0.04, -0.5, 0.4, -0.05, 0.6, 0.002, 0.000, 0.02, -0.1])
     upper_bounds = np.array([0.02, 0.55, 0.12, -0.05, 0.75, -0.005, 2.0, 0.015, 0.01, 0.08, -0.02])
+    # lower_bounds = np.array([0.003, 0.35, 0.05, -0.3, 0.4, -0.02, 0.9, 0.001, 0.0005, 0.02, -0.08])
+    # upper_bounds = np.array([0.01, 0.45, 0.09, -0.15, 0.55, -0.005, 1.4, 0.005, 0.002, 0.06, -0.03])
     bounds_PARSEC = [(lower_bounds[i], upper_bounds[i]) for i in range(len(lower_bounds))]
     
     with Pool(processes=cpu_count(), maxtasksperchild=30) as pool:  # Explicit Pool control
@@ -422,7 +424,7 @@ def evo_PARSEC(pop, maxITER, verbose=True):
         print(f"Optimized airfoil saved as '{final_dat}'")
         print(f"Total time: {time.time() - start:.2f}s")
     
-    plot_airfoil_from_dat("optimized_airfoil.dat")
+
     os.rename("optimized_airfoil.dat", f"{round(-result.fun)}_aerofoil.dat")
     plot_airfoil_from_dat(f"{round(-result.fun)}_aerofoil.dat")
     
@@ -539,14 +541,6 @@ def Swarm():
     print(f"data:{Run_Xfoil(naca)}")
     print(f"Executed {time.time()-start}s")
         
-# Calculates Reynolds number based on airspeed, air density, chord length and viscosity
-def find_Re(velocity=70): #velocity in km/h
-    p=1.225
-    V=velocity*1000/3600 #m/s
-    L=1 #1 meter long chord
-    u=1.83e-5 #dynamic viscosity of the air in 20 degrees and 200kPa
-    return round((p*V*L)/u)
-
 
 # Generates a list of NACA airfoils based on parameter ranges for camber, position, and thickness
 def genNACA(m_range,p_range,t_range):
@@ -608,7 +602,7 @@ def anaylise(aerofoil):
 
 #main program
 if __name__=="__main__":
-    choose=str(input("1.brute,2.diff"))
+    choose=str(input("1.brute force NACA,2.DE NACA,3.pso NACA,4.DE parsec,5.plot aerofoil(from dat file),6.pso parsec"))
     if choose=="1":
         naca=genNACA(m_range,p_range,t_range)
         num_cores = multiprocessing.cpu_count()-1
