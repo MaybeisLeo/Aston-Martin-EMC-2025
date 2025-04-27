@@ -24,6 +24,10 @@ re2=calc_re(300)
 mach1=calc_mach(70)
 mach2=calc_mach(300)
 
+def normalize(value, min_val, max_val):
+    return (value - min_val) / (max_val - min_val)
+
+
 def Run_parsec(name,re,mach,verbose=False):
     input_file = (f"{name}input.txt")
     output_file = (f"{name}output.txt")
@@ -152,7 +156,9 @@ def objective_PARSEC(params, verbose=True):
         if True:
             cl1, cd1 = Run_parsec(base_name,re1,mach1,verbose=verbose)
             cl2, cd2 = Run_parsec(base_name,re2,mach2,verbose=verbose)
-            score = (w1 * cl1 - w2 * cd2) 
+            cl_normalized = normalize(cl1, 0.5, 3.0)
+            cd_normalized = normalize(cd2,0.005,0.2)
+            score = (w1 * cl_normalized - w2 * cd_normalized) 
         if score == 0:
             return float('inf')
         if verbose:
@@ -168,12 +174,9 @@ def objective_PARSEC(params, verbose=True):
                 os.remove(f)
 
 def evo_PARSEC(pop, maxITER, verbose=True):
-    # lower_bounds = np.array([0.003, 0.25, 0.04, -0.5, 0.4, -0.05, 0.6, 0.002, 0.000, 0.02, -0.1])
-    # upper_bounds = np.array([0.02, 0.55, 0.12, -0.05, 0.75, -0.005, 2.0, 0.015, 0.01, 0.08, -0.02])
-    lower_bounds = np.array([0.001,0.1,0.02,-1.0, 0.1,-0.1,0.3,0.000,-0.01, 0.00,-0.3])
-    upper_bounds = np.array([0.04,0.7,0.15,0.1,0.95,-0.001,3.0,0.02,0.02,0.12,-0.001])
+    lower_bounds = np.array([0.001, 0.00, -0.05, -2.00, 0.00, -0.20, -2.00, -0.020, -0.050, 0.000, -0.50])
+    upper_bounds = np.array([0.060, 1.00,  0.20,  2.00, 1.00,  0.05,  5.00,  0.050,  0.050,0.200,0.050])  
     bounds_PARSEC = [(lower_bounds[i], upper_bounds[i]) for i in range(len(lower_bounds))]
-    
     with Pool(processes=cpu_count(), maxtasksperchild=30) as pool:  
         result = differential_evolution(
             objective_PARSEC,
@@ -197,6 +200,7 @@ def evo_PARSEC(pop, maxITER, verbose=True):
         print(f"Total time: {time.time() - start:.2f}s")
 
     return result.x, -result.fun
+
 
 
 if __name__=="__main__":
