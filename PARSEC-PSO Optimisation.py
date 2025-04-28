@@ -272,9 +272,9 @@ def pso_PARSEC(iters, n_particles):
     sample = sampler.random(n=n_particles)
     scaled = qmc.scale(sample, norm_lower, norm_upper)
     options = {
-        'c1': 0.5, 'c2': 0.25, 'w': 0.8,
+        'c1': 2, 'c2': 1.5, 'w': 0.8,
         'k': n_particles//4, 'p': 2,
-        'velocity_clamp': (-0.5, 0.5)
+        'velocity_clamp': (-0.1, 0.1)
     }
 
 
